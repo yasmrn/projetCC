@@ -1,0 +1,45 @@
+# Définit la version de la syntaxe Docker Compose utilisée dans ce fichier
+version: '3'
+
+# Définit les services à utiliser
+services:
+  # Le service "app" qui est construit à partir du Dockerfile présent dans le répertoire courant
+  app:
+    build: .
+    # Expose le port 3000 du conteneur à l'hôte local
+    ports:
+      - "3000:3000"
+    # Définit une variable d'environnement pour l'URL de la base de données MongoDB
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/mydb
+    # Montre le fichier "file.txt" dans le répertoire de travail du conteneur
+    volumes:
+      - ./file.txt:/app/file.txt
+    # Dépend du service "mongo" pour démarrer la base de données avant de démarrer l'application
+    depends_on:
+      - mongo
+    # Utilise le réseau nommé "mybridge"
+    networks:
+      - mybridge
+ 
+  # Le service "mongo" qui utilise une image Docker existante pour exécuter MongoDB
+  mongo:
+    image: mongo
+    # Définit une variable d'environnement pour créer une base de données MongoDB nommée "mydb"
+    environment:
+      - MONGO_INITDB_DATABASE=mydb
+    # Utilise un volume nommé "mongo_data" pour stocker les données de la base de données MongoDB
+    volumes:
+      - mongo_data:/data/db
+    # Utilise également le réseau "mybridge"
+    networks:
+      - mybridge
+  
+# Définit un réseau nommé "mybridge" avec le pilote de réseau "bridge"
+networks:
+  mybridge:
+    driver: bridge
+
+# Définit un volume nommé "mongo_data" pour stocker les données de la base de données MongoDB
+volumes:
+  mongo_data:

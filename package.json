@@ -1,0 +1,16 @@
+{
+    "name": "support-courses-app",
+    "version": "1.0.0",
+    "description": "Application to display support courses ads",
+    "main": "index.js", 
+    "dependencies": {
+        "ejs": "^3.1.8",
+        "express": "^4.17.1",
+        "mongodb": "^3.6.9",
+        "path": "^0.12.7"
+    },
+    "scripts": {
+        "start": "node index.js"
+    }
+
+}
