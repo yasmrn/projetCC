@@ -20,10 +20,22 @@ const filePath = path.join(__dirname, 'file.txt');
 
 //Definition route GET pour page d'accueil
 app.get('/', async (req, res) => {
-  //Etablit connexion à la bdd MongoDB
-  const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true });
-  const db = client.db(); //selectionne la bdd
-
+    //Etablit connexion à la bdd MongoDB
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true });
+    const db = client.db(); //selectionne la bdd
+    const collectionExists = await db.listCollections({ name: 'courses' }).hasNext();
+  
+    if (!collectionExists) {
+      // Crée la collection 'courses' si elle n'existe pas déjà
+      await db.createCollection('courses');
+  
+      // Ajoute quelques annonces de cours pour tester
+      await db.collection('courses').insertMany([
+        { title: 'Mathématiques', price: 25 },
+        { title: 'Physique', price: 30 },
+        { title: 'Chimie', price: 20 },
+      ]);
+    }
   const courses = await db.collection('courses').find().toArray(); //recupere toutes les annonces de cours stockées dans collection 'courses' et les stocke dans un tableau
   //lit le contenu du fichier 'file.txt'
   fs.readFile('file.txt', 'utf8', function(err, data) {
